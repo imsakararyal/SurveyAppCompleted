@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {View,Text,StyleSheet,TouchableOpacity,ScrollView} from 'react-native'
 // import ImagePicker from 'react-native-image-picker'
 import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from "rn-fetch-blob";
 import { Container, Header,Icon, Content,Picker,Title,Form, Item, Input, Label, Button, Body, Left,Right } from 'native-base';
 export default class HomePage extends Component {
     constructor(props) {
@@ -14,14 +15,18 @@ export default class HomePage extends Component {
           password: '',
           status: '',
           Phone: '',
+          long:'',
+          lat:'',
           address:'',
           Description:'',
           Before_Disaster:'',
           After_Disaster:'',
+          avatar1data:'',
+          avatar1type:'',
 
         };
       }
-      selectPhotoTapped=()=> {
+      selectPhotoTapped=(avatarnumber,e)=> {
         const options = {
           quality: 1.0,
           maxWidth: 500,
@@ -42,49 +47,183 @@ export default class HomePage extends Component {
             console.log('User tapped custom button: ', response.customButton);
           } else {
             let source = { uri: response.uri };
+            let data = response.path;
+            let type = response.type;
+            
     
             // You can also display the image using data:
             // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-    
+            if (avatarnumber == "1") {
+                //  console.log("Data from avatarno"+data);
+                this.setState({
+                  avatarSource1: source,
+                  avatar1data: data,
+                  avatar1type: type
+                });
+              }
+              if (avatarnumber == "2") {
+                this.setState({
+                  avatarSource2: source,
+                  avatar2data: data,
+                  avatar2type: type
+                });
+              }
+      
+              if (avatarnumber == "3") {
+                this.setState({
+                  avatarSource3: source,
+                  avatar3data: data,
+                  avatar3type: type
+                });
+              }
             this.setState({
               avatarSource: source,
+              avatar1data: data,
+            avatar1type: type
             });
           }
         });
       }
-      SendAllData = () => {
+  SubmitData=()=>{
+      console.log('hi')
+      RNFetchBlob.fetch(
+        "POST",
+        "http://192.168.10.10/nirmalmaster/collabrative/backend/masterproject/public/api/details",
+        {
+       
+          //   Authorization : "Bearer access-token",
+          // otherHeader : "foo",
+          // this is required, otherwise it won't be process as a multipart/form-data request
+          "Content-Type": "multipart/form-data"
+        
+        },
+       
+        [
+            
+// name:Raam
+// email:nirmal@gmail.com
+// phone_no:111111
+// disaster_timeline:after
+// lat:27.687767
+// long:85.305834
+// desc:Nirma
+          { name: "email", data: this.state.email},
+          { name: "name", data: this.state.Usrname },
+          { name: "desc", data: this.state.Description },
+          { name: "phone_no", data: this.state.Phone },
+          { name: "lat", data: this.state.lat },
+          { name: "long", data: this.state.long },
+          { name: "disaster_timeline", data: this.state.Before_Disaster },
+          { name: "disaster_timeline", data: this.state.After_Disaster },
+  
+          {
+            name: "phot_1",
+            filename: "document.jpeg",
+            filetype: "image/jpeg",
+            data: RNFetchBlob.wrap(this.state.avatar1data)
+          },
+          {
+            name: "photo_2",
+            filename: "document.jpeg",
+            filetype: "image/jpeg",
+            data: RNFetchBlob.wrap(this.state.avatar1data)
+          },
+          {
+            name: "photo_3",
+            filename: "document.jpeg",
+            filetype: "image/jpeg",
+            data: RNFetchBlob.wrap(this.state.avatar1data)
+          },
+          {
+            name: "photo_4",
+            filename: "document.jpeg",
+            filetype: "image/jpeg",
+            data: RNFetchBlob.wrap(this.state.avatar1data)
+          },
+        ]
+        
+      )
+      .then(response => {
+        console.log('hello')
+        console.log(JSON.stringify(response));
+        // this.props.navigation.navigate("BasicFormPart2");r
+        return response.json();
+      })
+      .then(jsonResponse => {
+         console.log(JSON.stringify(jsonResponse));
+         
 
-        fetch('', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        Usrname: '',
-                        address: '',
-                        Phone:'',
-                        Description:'',
-                        After_Disaster:'',
-                        Before_Disaster:'',
-                    })
-                })
+        // if (jsonResponse.status == "success") {
+        //   AsyncStorage.setItem(
+        //     "savedPoint",
+        //     jsonResponse.value.point.toString()
+        //   );
+        //   AsyncStorage.setItem("savedStatus", jsonResponse.value.status);
+        //   AsyncStorage.setItem(
+        //     "savedHomeowner",
+        //     jsonResponse.homeowner.id.toString()
+        //   );
+        //   Toast.show({
+        //     text: "Homeowner Form sucessfully submitted",
+        //     buttonText: "Okay",
+        //     type: "success",
+        //     duration: 3000
+        //   });
+        //   this.setState({
+        //     loadingSubmit: false
+        //   });
+        //   //  this.props.navigation.navigate("BasicFormPart2");
+        // } else {
+        //   Toast.show({
+        //     text: "Problem in sending Data.Please Try Again",
+        //     buttonText: "Okay",
+        //     type: "danger",
+        //     duration: 3000
+        //   });
+        //   this.setState({
+        //     loadingSubmit: false
+        //   });
+        // }
+      })
+      .catch(err => {
+        // ...
+      });
+    }
+    
         
-                    .then((response) => response.json())
-                    .then((responseData) => {
-                        console.log("RESULTS HERE:", responseData)
+    //   SendAllData = () => {
+
+    //     fetch('', {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Accept': 'application/json',
+    //                     'Content-Type': 'application/json'
+    //                 },
+    //                 body: JSON.stringify({
+    //                     Usrname: '',
+    //                     address: '',
+    //                     Phone:'',
+    //                     Description:'',
+    //                     After_Disaster:'',
+    //                     Before_Disaster:'',
+    //                 })
+    //             })
         
-                    this.setState({
-                  isLoading: false,
-                  dataSource: responseJson,
-                }, function(){
+    //                 .then((response) => response.json())
+    //                 .then((responseData) => {
+    //                     console.log("RESULTS HERE:", responseData)
         
-                });
-              })
-              .catch((error) =>{
-                console.error(error);
-              }) 
-        };
+    //                 this.setState({
+    //               isLoading: false,
+    //               dataSource: responseJson,
+    //             }, function(){
+        
+    //             });
+    //           })
+    //           .catch((error) =>{
+    //             console.error(error);
+    //           }) 
+    //     };
   render() {
     return (
         <View>
@@ -137,7 +276,9 @@ export default class HomePage extends Component {
          
           <TouchableOpacity
             style={styles.customBtnDNG}
-            onPress={this.selectPhotoTapped}
+            onPress={e =>
+                this.selectPhotoTapped("1", e)
+              }
         
             
           >
@@ -148,7 +289,10 @@ export default class HomePage extends Component {
           </TouchableOpacity> 
           <TouchableOpacity
             style={styles.customBtnDNG}
-            onPress= {this.selectPhotoTapped}
+            // onPress= {this.selectPhotoTapped('2',e)}
+            onPress={e =>
+                this.selectPhotoTapped("2", e)
+              }
         
             
           >
@@ -159,7 +303,9 @@ export default class HomePage extends Component {
           </TouchableOpacity> 
           <TouchableOpacity
             style={styles.customBtnDNG}
-            onPress={this.selectPhotoTapped}
+            onPress={e =>
+                this.selectPhotoTapped("3", e)
+              }
         
             
           >
@@ -170,7 +316,9 @@ export default class HomePage extends Component {
           </TouchableOpacity> 
           <TouchableOpacity
             style={styles.customBtnDNG}
-            onPress= {this.selectPhotoTapped}
+            onPress={e =>
+                this.selectPhotoTapped("4", e)
+              }
         
             
           >
@@ -203,7 +351,7 @@ export default class HomePage extends Component {
           </TouchableOpacity>  */}
           <TouchableOpacity
             style={styles.customBtnDNG}
-            onPress={this.SendAllData}
+            onPress={this.SubmitData}
         
             
           >
