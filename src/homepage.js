@@ -8,15 +8,15 @@ export default class HomePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          selected: undefined,
-          Usrname: '',
+          selected:'',
+          Username: '',
           photo:null,
           email : '',
           password: '',
           status: '',
           Phone: '',
-          long:'',
-          lat:'',
+          latitude: null,
+          longitude: null,
           address:'',
           Description:'',
           Before_Disaster:'',
@@ -84,6 +84,37 @@ export default class HomePage extends Component {
           }
         });
       }
+      handleInputChange=(event)=> {
+        this.setState({email: event.target.value,
+          Username: event.target.value,
+          Description: event.target.value,
+          Phone: event.target.value,
+          selected: event.target.value,
+          latitude: event.target.value,
+          longitude: event.target.value,
+        
+        })
+      }
+      // handleInputChange=(event)=> {
+      //   const target = event.target;
+      //   const value = target.value;
+      //   const name = target.name;
+      //   this.setState({
+      //     [name]: value
+      //   });
+      // }
+      // handleInputChange(event) {
+      //   if (event.target.name == "email") {
+      //            this.setState({
+      //             email: event.target.value
+      //            });
+      //          }
+      //    if (event.target.name == "Username") {
+      //            this.setState({
+      //             Username: event.target.value
+      //            });
+      //          }
+      //  }
   SubmitData=()=>{
       console.log('hi')
       RNFetchBlob.fetch(
@@ -108,12 +139,12 @@ export default class HomePage extends Component {
 // long:85.305834
 // desc:Nirma
           { name: "email", data: this.state.email},
-          { name: "name", data: this.state.Usrname },
+          { name: "name", data: this.state.Username },
           { name: "desc", data: this.state.Description },
           { name: "phone_no", data: this.state.Phone },
-          { name: "lat", data: this.state.lat },
-          { name: "long", data: this.state.long },
-          { name: "disaster_timeline", data: this.state.Before_Disaster },
+          { name: "lat", data: this.state.latitude },
+          { name: "long", data: this.state.longitude},
+          { name: "selected", data: this.state.selected },
           { name: "disaster_timeline", data: this.state.After_Disaster },
   
           {
@@ -224,6 +255,19 @@ export default class HomePage extends Component {
     //             console.error(error);
     //           }) 
     //     };
+    componentDidMount() {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.setState({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            error: null,
+          });
+        },
+        (error) => this.setState({ error: error.message }),
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+      );
+    }
   render() {
     return (
         <View>
@@ -240,18 +284,36 @@ export default class HomePage extends Component {
                    <Form style={{width:'90%'}}>
             <Item floatingLabel>
               <Label>Enter Name</Label>
-              <Input />
+              
+              <Input type="text" name="Username"
+               onChange={this.handleInputChange}
+              value={this.state.Username}
+              
+              />
             </Item>
             <Item floatingLabel last>
-              <Label>Enter address</Label>
-              <Input />
+              <Label>Enter email</Label>
+              <Input type="email" 
+              name="email"
+              onChange={this.handleInputChange}
+               value={this.state.email}
+              />
             </Item>
             <Item floatingLabel>
               <Label>Enter Phone No</Label>
-              <Input />
+              <Input type="number" name="Phone"
+             onChange={this.handleInputChange}
+              value={this.state.Phone}
+              
+              />
             </Item>
-            <Text style={{marginLeft:15, fontSize: 17,color:'#000000'}}>Disaster Time
-            </Text>
+            
+            <Text style={{marginLeft:15, fontSize: 17,color:'#000000'}}>Disaster Time</Text>
+            {/* <Text>Latitude: {this.state.latitude}</Text>
+            <Text>Longitude: {this.state.longitude}</Text>
+            {this.state.error ? <Text>Error: {this.state.error}</Text> : null} */}
+            
+            
             <Picker
               mode="dropdown"
               iosIcon={<Icon name="arrow-down" />}
@@ -259,6 +321,7 @@ export default class HomePage extends Component {
               placeholderStyle={{ color: "#bfc6ea" }}
               placeholderIconColor="#007aff"
               style={{marginLeft:7 }}
+              onChange={this.handleInputChange}
               selectedValue={this.state.selected}
             //   onValueChange={this.onValueChange.bind(this)}
             >
@@ -268,7 +331,10 @@ export default class HomePage extends Component {
             </Picker>
             <Item floatingLabel>
               <Label>Enter Description</Label>
-              <Input />
+              <Input type="password" name="confirmpassword"
+              onChange={this.handleInputChange}
+              value={this.state.Description}
+              />
             </Item>
           </Form>
           </View>
