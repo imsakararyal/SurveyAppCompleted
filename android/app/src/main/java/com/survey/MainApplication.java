@@ -3,7 +3,10 @@ package com.survey;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+<<<<<<< HEAD
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
+=======
+>>>>>>> 53369010f42cdde54e85f05dabc004236514f9a7
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.facebook.react.ReactNativeHost;
@@ -26,7 +29,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+<<<<<<< HEAD
             new RNFusedLocationPackage(),
+=======
+>>>>>>> 53369010f42cdde54e85f05dabc004236514f9a7
             new RNFetchBlobPackage(),
             new ImagePickerPackage()
       );
