@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import {View,Text,StyleSheet,TouchableOpacity,ScrollView,PermissionsAndroid,Image} from 'react-native'
+import {View,Text,StyleSheet,TouchableOpacity,ScrollView,PermissionsAndroid,Image,Platform,Alert} from 'react-native'
 // import ImagePicker from 'react-native-image-picker'
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from "rn-fetch-blob";
-import { Container, Header,Icon, Content,Picker,Title,Form, Item, Input, Label, Button, Body, Left,Right,Textarea } from 'native-base';
+import { Container, Header,Icon, Content,Picker,Title,Form, Item, Input, Label, Button, Body, Left,Right,Textarea,Card,CardItem } from 'native-base';
 import Geolocation from "react-native-geolocation-service";
-
+import Icons from "react-native-vector-icons/FontAwesome";
 export default class HomePage extends Component {
     constructor(props) {
         super(props);
@@ -23,6 +23,17 @@ export default class HomePage extends Component {
           Description:'',
           disaster:'',
 
+
+          masonry:'',
+          external_face:'',
+          damage_wall:'',
+          storeys:'',
+          pickerOptions: [
+            { name: 'Yes', id: 1 },
+            { name: 'No', id: 2 }
+          ],
+
+
           avatar1data:'',
           avatar1type:'',
           avatarSource1: null,
@@ -35,10 +46,53 @@ export default class HomePage extends Component {
           avatar4data:'',
           avatar4type:'',
           avatarSource4: null,
+
+
+          showComponentA:true,
+          showComponentB:true,
+          showComponentC:true
        
 
         };
       }
+      _toggleComponentA = () =>
+      this.setState({ showComponentA: !this.state.showComponentA });
+    
+      _toggleComponentB = () =>
+      this.setState({ showComponentB: !this.state.showComponentB });
+      _toggleComponentC = () =>
+      this.setState({ showComponentC: !this.state.showComponentC });
+
+      handleChangeOption(val, type) {
+
+        if (val !== 0) {
+       
+    
+          if (type == "masonry") {
+            this.setState({
+              masonry: val
+            });
+          }
+              
+          if (type == "external_face") {
+            this.setState({
+              external_face: val
+            });
+          }
+          if (type == "damage_wall") {
+            this.setState({
+              damage_wall: val
+            });
+          }
+          if (type == "storeys") {
+            this.setState({
+              storeys: val
+            });
+          }
+       
+        }
+      }
+
 componentDidMount(){
   this.getLatLong();
 }
@@ -169,7 +223,13 @@ this.setState({
   avatarSource3: null,
   avatar4data:'',
   avatar4type:'',
-  avatarSource4: null
+  avatarSource4: null,
+
+
+  masonry:'',
+  external_face:'',
+  damage_wall:'',
+  storeys:'',
 });
       };
   SubmitData=()=>{
@@ -193,104 +253,185 @@ this.setState({
         ]
         
                 ));
-      RNFetchBlob.fetch(
-        "POST",
-        "http://192.168.10.10/nirmalmaster/collabrative/backend/masterproject/public/api/details",
-        {
-       
-          //   Authorization : "Bearer access-token",s
-          // otherHeader : "foo",
-          // this is required, otherwise it won't be process as a multipart/form-data request
-          "Content-Type": "multipart/form-data"
-        
-        },
-       
 
-  
-        [
+
+                let missingField = "";
+
+                if (this.state.Usrname == "") {
+                  missingField += "Enter Full Name\n";
+                  //console.log("MISSING FILES SURVEYNAME" + missingField);
+               /*   this.setState({
+                    surveyerNameError: "Enter surveyerName"
+                  });*/
+                }
+                if (this.state.email == "") {
+                  missingField += "Enter Email\n";
+                /*  this.setState({
+                    homeownerNameError: "Enter Home Owner"
+                  });*/
+                }
+                if (this.state.Phone == "") {
+                  missingField += "Enter Phone Number\n";
+                  /*this.setState({
+                    documentNumberError: "Enter Document Number"
+                  });*/
+                }
+                if (this.state.disaster == "") {
+                  missingField += "Select Disaster Time\n";
+                }
             
-// name:Raam
-// email:nirmal@gmail.com
-// phone_no:111111
-// disaster_timeline:after
-// lat:27.687767
-// long:85.305834
-// desc:Nirma
-          { name: "email", data: this.state.email},
-          { name: "name", data: this.state.Usrname },
-          { name: "desc", data: this.state.Description },
-          { name: "phone_no", data: this.state.Phone },
-          { name: "lat", data: this.state.lat },
-          { name: "long", data: this.state.long },
-          { name: "disaster_timeline", data: this.state.disaster },
+                if (this.state.Description == null) {
+                  missingField += "Write Description\n";
+                }
+                if (this.state.masonry == null) {
+                  missingField += "Select masonry option\n";
+                }
+                if (this.state.external_face == null) {
+                  missingField += "Select External option\n";
+                }
+                if (this.state.storeys == null) {
+                  missingField += "Select Storeys  option\n";
+                }
+                if (this.state.avatarSource1 == null) {
+                  missingField += "Upload Front Image\n";
+                }
+                if (this.state.avatarSource2 == null) {
+                  missingField += "Upload Back Image\n";
+                }
+                if (this.state.avatarSource3 == null) {
+                  missingField += "Upload Left Image\n";
+                }
+                if (this.state.avatarSource4 == null) {
+                  missingField += "Upload Right Image\n";
+                }
+                /*
+              if (this.state.selectedItems == "") {
+                missingField += "Select Municipality\n";
+              }
+              */
+            
+               
+            
+                if (missingField == "") {
+                  RNFetchBlob.fetch(
+                    "POST",
+                    "http://192.168.10.10/nirmalmaster/collabrative/backend/masterproject/public/api/details",
+                    {
+                   
+                      //   Authorization : "Bearer access-token",s
+                      // otherHeader : "foo",
+                      // this is required, otherwise it won't be process as a multipart/form-data request
+                      "Content-Type": "multipart/form-data"
+                    
+                    },
+                   
+            
+              
+                    [
+                        
+            // name:Raam
+            // email:nirmal@gmail.com
+            // phone_no:111111
+            // disaster_timeline:after
+            // lat:27.687767
+            // long:85.305834
+            // desc:Nirma
+                      { name: "email", data: this.state.email},
+                      { name: "name", data: this.state.Usrname },
+                      { name: "desc", data: this.state.Description },
+                      { name: "phone_no", data: this.state.Phone },
+                      { name: "lat", data: this.state.lat },
+                      { name: "long", data: this.state.long },
+                      { name: "disaster_timeline", data: this.state.disaster },
+            
+              
+                      {
+                        name: "photo_1",
+                        filename: "front.jpeg",
+                        filetype: "image/jpeg",
+                        data: RNFetchBlob.wrap(this.state.avatar1data)
+                      },
+                      {
+                        name: "photo_2",
+                        filename: "right.jpeg",
+                        filetype: "image/jpeg",
+                        data: RNFetchBlob.wrap(this.state.avatar2data)
+                      },
+                      {
+                        name: "photo_3",
+                        filename: "left.jpeg",
+                        filetype: "image/jpeg",
+                        data: RNFetchBlob.wrap(this.state.avatar3data)
+                      },
+                      {
+                        name: "photo_4",
+                        filename: "back.jpeg",
+                        filetype: "image/jpeg",
+                        data: RNFetchBlob.wrap(this.state.avatar4data)
+                      },
+            
+            
+                      { name: "masonry", data: this.state.masonry },
+                      { name: "external_face", data: this.state.external_face },
+                      { name: "damage_wall", data: this.state.damage_wall },
+                      { name: "storeys", data: this.state.storeys },
+            
+            
+                    ]
+                    
+                  )
+                  .then(response => {
+                    console.log('hello')
+                    console.log(JSON.stringify(response));
+                    // this.props.navigation.navigate("BasicFormPart2");r
+                    return response.json();
+                  })
+                  .then(jsonResponse => {
+                     console.log(JSON.stringify(jsonResponse));
+                     
+            
+                    if (jsonResponse.status == "success") {
+            alert("Sucessfully recorded");
+            this.clearData();
+                   /*   Toast.show({
+                        text: "Homeowner Form sucessfully submitted",
+                        buttonText: "Okay",
+                        type: "success",
+                        duration: 3000
+                      });
+                      this.setState({
+                        loadingSubmit: false
+                      });*/
+                      //  this.props.navigation.navigate("BasicFormPart2");
+                    } else {
+                      alert("Problem in sending data..Please try again");
+                   /*   Toast.show({
+                        text: "Problem in sending Data.Please Try Again",
+                        buttonText: "Okay",
+                        type: "danger",
+                        duration: 3000
+                      });
+                      this.setState({
+                        loadingSubmit: false
+                      });*/
+                    }
+                  })
+                  .catch(err => {
+                    // ...
+                  });
 
-  
-          {
-            name: "photo_1",
-            filename: "front.jpeg",
-            filetype: "image/jpeg",
-            data: RNFetchBlob.wrap(this.state.avatar1data)
-          },
-          {
-            name: "photo_2",
-            filename: "right.jpeg",
-            filetype: "image/jpeg",
-            data: RNFetchBlob.wrap(this.state.avatar2data)
-          },
-          {
-            name: "photo_3",
-            filename: "left.jpeg",
-            filetype: "image/jpeg",
-            data: RNFetchBlob.wrap(this.state.avatar3data)
-          },
-          {
-            name: "photo_4",
-            filename: "back.jpeg",
-            filetype: "image/jpeg",
-            data: RNFetchBlob.wrap(this.state.avatar4data)
-          },
-        ]
-        
-      )
-      .then(response => {
-        console.log('hello')
-        console.log(JSON.stringify(response));
-        // this.props.navigation.navigate("BasicFormPart2");r
-        return response.json();
-      })
-      .then(jsonResponse => {
-         console.log(JSON.stringify(jsonResponse));
-         
+                  // this.props.navigation.navigate("BasicFormPart2");
+                } else {
+                  Alert.alert(missingField);
+                }
 
-        if (jsonResponse.status == "success") {
-alert("Sucessfully recorded");
-this.clearData();
-       /*   Toast.show({
-            text: "Homeowner Form sucessfully submitted",
-            buttonText: "Okay",
-            type: "success",
-            duration: 3000
-          });
-          this.setState({
-            loadingSubmit: false
-          });*/
-          //  this.props.navigation.navigate("BasicFormPart2");
-        } else {
-          alert("Problem in sending data..Please try again");
-       /*   Toast.show({
-            text: "Problem in sending Data.Please Try Again",
-            buttonText: "Okay",
-            type: "danger",
-            duration: 3000
-          });
-          this.setState({
-            loadingSubmit: false
-          });*/
-        }
-      })
-      .catch(err => {
-        // ...
-      });
+
+
+
+
+
+
+
     }
     
         
@@ -329,109 +470,525 @@ this.clearData();
     //     };
   render() {
     return (
-        <View>
-             <ScrollView>
-             <Header style={{backgroundColor:'#9ec54d',alignItems:'center'}}>
+  
+        <View style={{ backgroundColor: "#d2dae2" }}>
+                     <Header style={{backgroundColor:'#673AB7',alignItems:'center'}}>
              <Left/>
              <Body>
              <Title>SURVEY</Title>
              </Body>
-             <Right />
-             </Header>
+             <Right>
 
-
-            <View style={{alignItems:'center'}}>
-                   <Form style={{width:'90%'}}>
-            <Item stackedLabel>
-              <Label style={styles.label}>Enter Name</Label>
-              <Input
-                                //  style={styles.newInput}
-                                  value={this.state.Usrname}
-                                
-                                  onChangeText={text =>
-                                   this.setState({
-                                    Usrname:text
-                                   })
-                                  }
-                                />
-            </Item>
-            <Item stackedLabel last>
-              <Label style={styles.label}>Enter Email address</Label>
-              <Input 
-              keyboardType="email-address"
-              value={this.state.email}
-              onChangeText={text =>
-               this.setState({
-                email:text
-               })
-              }
-              />
-            </Item>
-            <Item stackedLabel>
-              <Label style={styles.label}>Enter Phone No</Label>
-              <Input 
-              keyboardType="phone-pad"
-               value={this.state.Phone}
-               onChangeText={text =>
-                this.setState({
-                  Phone:text
-                })
-               }
-              
-              />
-            </Item>
-            <Text style={[styles.label,{marginLeft:15,marginTop:3}]}>Disaster Time
-            </Text>
-            <Picker
-              mode="dialog"
-              iosIcon={<Icon name="arrow-down" />}
-              placeholder="Select your SIM"
-              placeholderStyle={{ color: "#bfc6ea" }}
-              placeholderIconColor="#007aff"
-              style={{marginLeft:7 }}
-
-              selectedValue={this.state.disaster}
-              onValueChange={text =>
-                this.setState({
-                  disaster: text
-                })
-              }
-
-            //   onValueChange={this.onValueChange.bind(this)}
-            >
-              <Picker.Item label="Before Disaster" value="before" />
-              <Picker.Item label="After Disaster" value="after" />
+             <Button rounded transparent style={{
+               borderWidth:1,
+               borderColor:'white',
+               padding:2
+             }}
              
-            </Picker>
-            <Item style={{
-              borderWidth:0,
-              borderBottomWidth: 0
-            }}>
-              <Label style={styles.label}>Enter Description</Label>
+             onPress={
+               this.SubmitData
+             }
+             
+             
+             > 
+             <Icons
+                          name="check"
+                          size={18}
+                          style={{ color: "#fff",paddingLeft:2 }}
+                        />
+            <Text style={{color:'#fff'}}>Save</Text>
+          </Button>
+               </Right>
+             </Header>
+             <ScrollView>
 
 
 
 
-            
-            </Item>
-            
-            <Textarea
-                                  value={this.state.Description}
+
+
+<Content padder>
+<Card style={{ flex: 0 }}>
+                <CardItem header bordered style={{}}>
+                  <Text style={styles.cardTitle}>General Question</Text>
+                  <Right style={{ justifyContent: "flex-end" }}>
+                    <TouchableOpacity onPress={this._toggleComponentA}>
+                      <View
+                        style={{
+                          padding: 5,
+                          borderColor: "green",
+                          borderWidth: 2,
+                          borderRadius: 25,
+                          alignSelf: "flex-end"
+                        }}
+                      >
+                        <Icons
+                          name="align-justify"
+                          size={18}
+                          style={{ color: "green" }}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </Right>
+                </CardItem>
+                {this.state.showComponentA ? (
+                  <CardItem
+                    style={{
+                      backgroundColor: "#ebedec",
+                      paddingLeft: 0,
+                      paddingRight: 5,
+                      paddingTop: 0,
+                      paddingBottom: 20
+                    }}
+                  >
+                    <Left>
+                      <Body>
+                        <Content>
+                          <Form>
+
+                          <View style={{ paddingVertical: 8 }}>
+                              <Text style={styles.newText}>
+                              <Text style={styles.required}>*</Text>
+                                Full Name
+                              </Text>
+                              <Item regular>
+                                <Input
+                                  style={styles.newInput}
+                                  value={this.state.Usrname}
+                                  onChangeText={text =>
+                                    this.setState({
+                                     Usrname:text
+                                    })
+                                   }
+                                />
+                              </Item>
+                            </View>
+
+                            <View style={{ paddingVertical: 8 }}>
+                              <Text style={styles.newText}>
+                              <Text style={styles.required}>*</Text>
+                            Email Address
+                              </Text>
+                              <Item regular>
+                                <Input
+                                  style={styles.newInput}
+                                  value={this.state.email}
+                                  keyboardType="email-address"
+                                  onChangeText={text =>
+                                    this.setState({
+                                     email:text
+                                    })
+                                   }
+                                />
+                              </Item>
+                            </View>
+
+
+                            
+                            <View style={{ paddingVertical: 8 }}>
+                              <Text style={styles.newText}>
+                              <Text style={styles.required}>*</Text>
+                          Phone Number
+                              </Text>
+                              <Item regular>
+                                <Input
+                                  style={styles.newInput}
+                                  value={this.state.Phone}
+                                  keyboardType="phone-pad"
+                                  onChangeText={text =>
+                                    this.setState({
+                                     Phone:text
+                                    })
+                                   }
+                                />
+                              </Item>
+                            </View>
+
+
+
+
+                            <View style={{ paddingVertical: 8 }}>
+           
+              
+                            <Text style={styles.newText}>
+                              <Text style={styles.required}>*</Text>
+                            Disaster Time
+                            </Text>
+                        
+
+                          <View style={picker.pickerContainer}>
+                            <Icons
+                              name="angle-down"
+                              size={20}
+                              style={[styles.pickerIcon]}
+                            />
+                            <Picker
+                              style={picker.pickerMain}
+                              selectedValue={this.state.disaster}
+                              onValueChange={text =>
+                               this.setState({
+                                 disaster:text
+                               })
+                              }
+                            >
+                              <Picker.Item
+                                label="Select Options"
+                                value="0"
+                              />
+  <Picker.Item label="Before Disaster" value="before" />
+              <Picker.Item label="After Disaster" value="after" />
+                            </Picker>
+                          </View>
+                        </View>
+
+
+
+                        <View style={{ paddingVertical: 8 }}>
+                              <Text style={styles.newText}>
+                                <Text style={styles.required}>*</Text>
+                                Description
+                              </Text>
+                              <Item regular>
+                                <Textarea
+                                  value={this.state.address}
                                   rowSpan={3}
                                   bordered
-                                  placeholder="Enter details here"
+                                  placeholder="Enter Details here"
                                   placeholderTextColor="#888888"
                                   onChangeText={text =>
                                    
-                                   this.setState({
-                                    Description:text
+                                    this.setState({
+                                    address:text
                                     })
                                   }
-                                  />
-          </Form>
-          </View>
+                                  style={{
+                                    width: "100%",
+                                    fontSize: 15,
 
-          <View>
+                                    backgroundColor: "#F8F9FC",
+
+                                    color: "#000",
+                                   // fontSize: 15,
+
+                                  //  paddingVertical:
+                                    //  Platform.OS === "ios" ? 7 : 0,
+                                  //  paddingHorizontal: 7,
+                                    borderRadius: 0,
+                                    borderColor: "#ccc",
+                                    borderWidth: 0,
+                                    //marginBottom: 5
+                                  }}
+                                />
+                              </Item>
+                            </View>
+
+
+
+                  
+
+
+
+
+
+                            <View style={{ paddingVertical: 8 }}>
+                              <Text style={styles.newText}>
+                              <Text style={styles.required}>*</Text>
+                                latitude
+                              </Text>
+                              <Item regular>
+                                <Input
+                                  style={styles.newInput}
+                                  value={this.state.lat}
+                                  disabled
+                                />
+                              </Item>
+                            </View>
+
+
+                            <View style={{ paddingVertical: 8 }}>
+                              <Text style={styles.newText}>
+                              <Text style={styles.required}>*</Text>
+                                longitude
+                              </Text>
+                              <Item regular>
+                                <Input
+                                  style={styles.newInput}
+                                  value={this.state.long}
+                                  disabled
+                                />
+                              </Item>
+                            </View>
+                          </Form>
+                        </Content>
+                      </Body>
+                    </Left>
+                  </CardItem>
+                )
+                :
+                null
+                  }
+
+</Card>
+
+
+
+<Card style={{ flex: 0 }}>
+                <CardItem header bordered style={{}}>
+                  <Text style={styles.cardTitle}>General Question</Text>
+                  <Right style={{ justifyContent: "flex-end" }}>
+                    <TouchableOpacity onPress={this._toggleComponentB}>
+                      <View
+                        style={{
+                          padding: 5,
+                          borderColor: "green",
+                          borderWidth: 2,
+                          borderRadius: 25,
+                          alignSelf: "flex-end"
+                        }}
+                      >
+                        <Icons
+                          name="align-justify"
+                          size={18}
+                          style={{ color: "green" }}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </Right>
+                </CardItem>
+                {this.state.showComponentB ? (
+                  <CardItem
+                    style={{
+                      backgroundColor: "#ebedec",
+                      paddingLeft: 0,
+                      paddingRight: 5,
+                      paddingTop: 0,
+                      paddingBottom: 20
+                    }}
+                  >
+                    <Left>
+                      <Body>
+                        <Content>
+                        <View style={{ paddingVertical: 8 }}>
+                              <Text style={styles.newText}>
+                                <Text style={styles.required}>*</Text>
+                                Is your house made of stone masonry with mud mortar?(के यो माटोको जोडाईमा ढुङ्गाले बनेको हो ?)
+
+                              </Text>
+
+                              <View style={picker.pickerContainer}>
+                                <Icons
+                                  name="angle-down"
+                                  size={20}
+                                  style={[styles.pickerIcon]}
+                                />
+                                <Picker
+                                  style={picker.pickerMain}
+                                  selectedValue={this.state.masonry}
+                                  onValueChange={e =>
+                                    this.handleChangeOption(e, "masonry")
+                                  }
+                                >
+                                  <Picker.Item
+                                    label="Select Options"
+                                    value="0"
+                                  />
+                                  {this.state.pickerOptions.map(
+                                    (pickerOptions, i) => {
+                                      return (
+                                        <Picker.Item
+                                          label={pickerOptions.name}
+                                          value={pickerOptions.id}
+                                          key={i}
+                                        />
+                                      );
+                                    }
+                                  )}
+                                </Picker>
+                              </View>
+                            </View>
+                      
+
+                            <View style={{ paddingVertical: 8 }}>
+                              <Text style={styles.newText}>
+                                <Text style={styles.required}>*</Text>
+                                Are all four walls(along four exterior faces) composed of stone masonry with mud mortar?(
+                                  यो माटोको जोडाईमा ढुङ्गाले बनेको घरको चारवोटा गारहरु मात्रै(बाहिर देखिने गाराहरु) रहेका छन् ?
+                                )
+                              </Text>
+
+                              <View style={picker.pickerContainer}>
+                                <Icons
+                                  name="angle-down"
+                                  size={20}
+                                  style={[styles.pickerIcon]}
+                                />
+                                <Picker
+                                  style={picker.pickerMain}
+                                  selectedValue={this.state.external_face}
+                                  onValueChange={e =>
+                                    this.handleChangeOption(e, "external_face")
+                                  }
+                                >
+                                  <Picker.Item
+                                    label="Select Options"
+                                    value="0"
+                                  />
+                                  {this.state.pickerOptions.map(
+                                    (pickerOptions, i) => {
+                                      return (
+                                        <Picker.Item
+                                          label={pickerOptions.name}
+                                          value={pickerOptions.id}
+                                          key={i}
+                                        />
+                                      );
+                                    }
+                                  )}
+                                </Picker>
+                              </View>
+                            </View>
+
+                            <View style={{ paddingVertical: 8 }}>
+                              <Text style={styles.newText}>
+                                <Text style={styles.required}>*</Text>
+                                Does the building show significant damages to the walls or significant distortion?(
+                                  घरको लामो पट्टिका गाराहरुमा देखिने किसिमको क्ष्यति भएको छ?
+                                )
+                              </Text>
+
+                              <View style={picker.pickerContainer}>
+                                <Icons
+                                  name="angle-down"
+                                  size={20}
+                                  style={[styles.pickerIcon]}
+                                />
+                                <Picker
+                                  style={picker.pickerMain}
+                                  selectedValue={this.state.damage_wall}
+                                  onValueChange={e =>
+                                    this.handleChangeOption(e, "damage_wall")
+                                  }
+                                >
+                                  <Picker.Item
+                                    label="Select Options"
+                                    value="0"
+                                  />
+                                  {this.state.pickerOptions.map(
+                                    (pickerOptions, i) => {
+                                      return (
+                                        <Picker.Item
+                                          label={pickerOptions.name}
+                                          value={pickerOptions.id}
+                                          key={i}
+                                        />
+                                      );
+                                    }
+                                  )}
+                                </Picker>
+                              </View>
+                            </View>
+
+                            <View style={{ paddingVertical: 8 }}>
+                              <Text style={styles.newText}>
+                                <Text style={styles.required}>*</Text>
+                                Does the building exceed two storey plus attick?( के यो घर बुईगल सहितको दुई तलला भन्दा बढी उचाइको छ ?)
+                              </Text>
+
+                              <View style={picker.pickerContainer}>
+                                <Icons
+                                  name="angle-down"
+                                  size={20}
+                                  style={[styles.pickerIcon]}
+                                />
+                                <Picker
+                                  style={picker.pickerMain}
+                                  selectedValue={this.state.storeys}
+                                  onValueChange={e =>
+                                    this.handleChangeOption(e, "storeys")
+                                  }
+                                >
+                                  <Picker.Item
+                                    label="Select Options"
+                                    value="0"
+                                  />
+                                  {this.state.pickerOptions.map(
+                                    (pickerOptions, i) => {
+                                      return (
+                                        <Picker.Item
+                                          label={pickerOptions.name}
+                                          value={pickerOptions.id}
+                                          key={i}
+                                        />
+                                      );
+                                    }
+                                  )}
+                                </Picker>
+                              </View>
+                            </View>
+
+
+
+                        </Content>
+                      </Body>
+                    </Left>
+                  </CardItem>
+                )
+                :
+                null
+                  }
+
+</Card>
+
+
+
+
+
+
+
+
+
+
+
+
+<Card style={{ flex: 0,paddingBottom:20 }}>
+                <CardItem header bordered style={{}}>
+                  <Text style={styles.cardTitle}>Pictures</Text>
+                  <Right style={{ justifyContent: "flex-end" }}>
+                    <TouchableOpacity onPress={this._toggleComponentC}>
+                      <View
+                        style={{
+                          padding: 5,
+                          borderColor: "green",
+                          borderWidth: 2,
+                          borderRadius: 25,
+                          alignSelf: "flex-end"
+                        }}
+                      >
+                        <Icons
+                          name="align-justify"
+                          size={18}
+                          style={{ color: "green" }}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </Right>
+                </CardItem>
+
+                {this.state.showComponentC? (
+                  <CardItem
+                    style={{
+                      backgroundColor: "#ebedec",
+                      paddingLeft: 0,
+                      paddingRight: 5,
+                      paddingTop: 0,
+                      paddingBottom: 20
+                    }}
+                  >
+                    <Left>
+                      <Body>
+                        <Content>
+                         
+                        <View>
           <View
                                 style={{
                                   flex: 1,
@@ -488,6 +1045,7 @@ this.clearData();
                                   }}
                                 >
                                   <Label style={styles.label}>
+                                  <Text style={styles.required}>*</Text>
                                   Back Image
                                   </Label>
 
@@ -528,7 +1086,8 @@ this.clearData();
                                   flexDirection: "row",
                                   alignItems: "center",
                                   alignSelf: "center",
-                                  paddingLeft: 20
+                                  paddingLeft: 20,
+                    paddingBottom:30
                                 }}
                               >
                                 <View
@@ -577,6 +1136,7 @@ this.clearData();
                                   }}
                                 >
                                   <Label style={styles.label}>
+                                  <Text style={styles.required}>*</Text>
                           Right Image
                                   </Label>
 
@@ -607,90 +1167,28 @@ this.clearData();
                                   </TouchableOpacity>
                                 </View>
                               </View>
+                        </Content>
+                      </Body>
+                    </Left>
+                  </CardItem>
+                )
+                :
+                null
+                  }
+
+</Card>
+
+
+</Content>
+
+         
+
+
+         
                             
 
           <View style={{flex:1,alignItems:'center'}}>
-         {
-           /**
-            * <TouchableOpacity
-            style={styles.customBtnDNG}
-            onPress={e =>
-                this.selectPhotoTapped("1", e)
-              }
-        
-            
-          >
-            <Text style={styles.customBtnText}>
-            Click to Get Image
-         
-            </Text>
-          </TouchableOpacity> 
-          <TouchableOpacity
-            style={styles.customBtnDNG}
-            // onPress= {this.selectPhotoTapped('2',e)}
-            onPress={e =>
-                this.selectPhotoTapped("2", e)
-              }
-        
-            
-          >
-            <Text style={styles.customBtnText}>
-            Click to Get Right Image
-         
-            </Text>
-          </TouchableOpacity> 
-          <TouchableOpacity
-            style={styles.customBtnDNG}
-            onPress={e =>
-                this.selectPhotoTapped("3", e)
-              }
-        
-            
-          >
-            <Text style={styles.customBtnText}>
-            Click to Get Back Image
-         
-            </Text>
-          </TouchableOpacity> 
-          <TouchableOpacity
-            style={styles.customBtnDNG}
-            onPress={e =>
-                this.selectPhotoTapped("4", e)
-              }
-        
-            
-          >
-            <Text style={styles.customBtnText}>
-            Click to Get Left Image
-         
-            </Text>
-          </TouchableOpacity> 
-            * 
-            */
-         }
-          
-          {/* <TouchableOpacity
-            style={styles.customBtnDNG}
-            onPress= {this.handleChoosePhoto}
-        
-            
-          >
-            <Text style={styles.customBtnText}>
-            Click to Get Fifth Image
-         
-            </Text>
-          </TouchableOpacity> 
-          <TouchableOpacity
-            style={styles.customBtnDNG}
-            onPress={this.selectPhotoTapped}
-        
-            
-          >
-            <Text style={styles.customBtnText}>
-            Click to Get Sixth Image
-         
-            </Text>
-          </TouchableOpacity>  */}
+   
 
 
 
@@ -698,17 +1196,6 @@ this.clearData();
 
 
 
-          <TouchableOpacity
-            style={styles.customBtnDNG}
-            onPress={this.SubmitData}
-        
-            
-          >
-            <Text style={styles.customBtnText}>
-            Submit
-         
-            </Text>
-          </TouchableOpacity> 
       
           </View>
           
@@ -716,10 +1203,46 @@ this.clearData();
     
     
      </View>
+
     );
   }
 }
+
+
+const picker = StyleSheet.create({
+
+  pickerContainer: {
+    borderColor: "#dee1df",
+    borderWidth: 1,
+    borderRadius: 4
+  },
+  pickerIcon: {
+    backgroundColor: "transparent",
+    right: 5,
+    paddingLeft: 5,
+    marginLeft: 0,
+    marginTop: 20,
+    flex: 1,
+    position: "absolute",
+    top: -15,
+    zIndex: 1000,
+    color: "#012552",
+    fontSize: 20
+  },
+  pickerMain: {
+    height: 35,
+    marginBottom: 0,
+    padding: 0,
+    backgroundColor: "#fff",
+
+    borderColor: "black",
+    borderWidth: 1
+  }
+});
 const styles = StyleSheet.create({
+  required:{
+    color:'red'
+  },
   label:{
     color:'#000',
     fontSize:13,
@@ -761,7 +1284,32 @@ const styles = StyleSheet.create({
             height: 100
           },
         
-    
+          newText: {
+            fontSize: 14,
+            paddingBottom: 5,
+            color:'#000'
+          },
+        
+          newInput: {
+            height: 35,
+            marginBottom: 0,
+            padding: 2,
+            backgroundColor: "#fff",
+            borderRadius: 4
+          },
+          pickerIcon: {
+            backgroundColor: "transparent",
+            right: 5,
+            paddingLeft: 5,
+            marginLeft: 0,
+            marginTop: 20,
+            flex: 1,
+            position: "absolute",
+            top: -15,
+            zIndex: 1000,
+            color: "#012552",
+            fontSize: 20
+          },
 
 
 })
