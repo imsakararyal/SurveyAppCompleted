@@ -1,9 +1,6 @@
 rootProject.name = 'Survey'
-<<<<<<< HEAD
 include ':react-native-geolocation-service'
 project(':react-native-geolocation-service').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-geolocation-service/android')
-=======
->>>>>>> 53369010f42cdde54e85f05dabc004236514f9a7
 include ':rn-fetch-blob'
 project(':rn-fetch-blob').projectDir = new File(rootProject.projectDir, '../node_modules/rn-fetch-blob/android')
 include ':react-native-image-picker'

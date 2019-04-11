@@ -10,10 +10,7 @@
     "native-base": "^2.12.1",
     "react": "16.8.3",
     "react-native": "0.59.4",
-<<<<<<< HEAD
     "react-native-geolocation-service": "^2.0.0",
-=======
->>>>>>> 53369010f42cdde54e85f05dabc004236514f9a7
     "react-native-image-picker": "^0.28.1",
     "rn-fetch-blob": "^0.10.15"
   },
