@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import {View,Text,StyleSheet,TouchableOpacity,ScrollView,PermissionsAndroid,Image,Platform,Alert} from 'react-native'
+import {View,Text,StyleSheet,TouchableOpacity,ScrollView,PermissionsAndroid,Image,Platform,Alert,Keyboard} from 'react-native'
 // import ImagePicker from 'react-native-image-picker'
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from "rn-fetch-blob";
-import { Container, Header,Icon, Content,Picker,Title,Form, Item, Input, Label, Button, Body, Left,Right,Textarea,Card,CardItem } from 'native-base';
+import { Root,Spinner, Toast, Container, Header,Icon, Content,Picker,Title,Form, Item, Input, Label, Button, Body, Left,Right,Textarea,Card,CardItem } from 'native-base';
 import Geolocation from "react-native-geolocation-service";
 import Icons from "react-native-vector-icons/FontAwesome";
+import Modal from "react-native-modal";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 export default class HomePage extends Component {
     constructor(props) {
         super(props);
@@ -50,11 +52,18 @@ export default class HomePage extends Component {
 
           showComponentA:true,
           showComponentB:true,
-          showComponentC:true
+          showComponentC:true,
+
+          isModalGo: false,
+          isModalNogo: false,
        
+
+          loading:false,
 
         };
       }
+
+
       _toggleComponentA = () =>
       this.setState({ showComponentA: !this.state.showComponentA });
     
@@ -62,6 +71,14 @@ export default class HomePage extends Component {
       this.setState({ showComponentB: !this.state.showComponentB });
       _toggleComponentC = () =>
       this.setState({ showComponentC: !this.state.showComponentC });
+
+
+      _toggleModalGo = () =>
+      this.setState({ isModalGo: !this.state.isModalGo });
+      _toggleModalNoGo = () =>
+      this.setState({ isModalNogo: !this.state.isModalNogo });
+  
+      
 
       handleChangeOption(val, type) {
 
@@ -92,7 +109,12 @@ export default class HomePage extends Component {
        
         }
       }
-
+      componentWillUnmount() {
+        Toast.toastInstance = null;
+      }
+      componentWillMount() {
+        Toast.toastInstance = null;
+      }
 componentDidMount(){
   this.getLatLong();
 }
@@ -233,23 +255,53 @@ this.setState({
 });
       };
   SubmitData=()=>{
+    Keyboard.dismiss;
+    this.setState({
+      loading:true
+    });
       console.log('hi');
       console.log(JSON.stringify(
 
         [
-          { name: "email", data: this.state.email},
-                  { name: "name", data: this.state.Usrname },
-                  { name: "desc", data: this.state.Description },
-                  { name: "phone_no", data: this.state.Phone },
-                  { name: "lat", data: this.state.lat },
-                  { name: "long", data: this.state.long },
-                  { name: "disaster_timeline", data: this.state.disaster },
-                  {
-                    name: "phot_1",
-                    filename: "front.jpeg",
-                    filetype: "image/jpeg",
-                    data: RNFetchBlob.wrap(this.state.avatar1data)
-                  }
+          { name: "email", data: this.state.email.toString()},
+          { name: "name", data: this.state.Usrname.toString() },
+          { name: "desc", data: this.state.Description.toString() },
+          { name: "phone_no", data: this.state.Phone.toString() },
+          { name: "lat", data: this.state.lat.toString() },
+          { name: "long", data: this.state.long.toString() },
+          { name: "disaster_timeline", data: this.state.disaster.toString() },
+
+  
+          {
+            name: "photo_1",
+            filename: "front.jpeg",
+            filetype: "image/jpeg",
+            data: RNFetchBlob.wrap(this.state.avatar1data)
+          },
+          {
+            name: "photo_2",
+            filename: "right.jpeg",
+            filetype: "image/jpeg",
+            data: RNFetchBlob.wrap(this.state.avatar2data)
+          },
+          {
+            name: "photo_3",
+            filename: "left.jpeg",
+            filetype: "image/jpeg",
+            data: RNFetchBlob.wrap(this.state.avatar3data)
+          },
+          {
+            name: "photo_4",
+            filename: "back.jpeg",
+            filetype: "image/jpeg",
+            data: RNFetchBlob.wrap(this.state.avatar4data)
+          },
+
+
+          { name: "masonry", data: this.state.masonry==1?'yes':'no' },
+          { name: "external_face", data: this.state.external_face==1?'yes':'no'  },
+          { name: "damage_wall", data: this.state.damage_wall==1?'yes':'no'  },
+          { name: "storeys", data: this.state.storeys==1?'yes':'no'  }
         ]
         
                 ));
@@ -315,7 +367,8 @@ this.setState({
                 if (missingField == "") {
                   RNFetchBlob.fetch(
                     "POST",
-                    "http://192.168.10.10/nirmalmaster/collabrative/backend/masterproject/public/api/details",
+                   
+                    "http://192.168.4.96/nirmalmaster/thesis/backend/thesis/public/api/details",
                     {
                    
                       //   Authorization : "Bearer access-token",s
@@ -336,13 +389,13 @@ this.setState({
             // lat:27.687767
             // long:85.305834
             // desc:Nirma
-                      { name: "email", data: this.state.email},
-                      { name: "name", data: this.state.Usrname },
-                      { name: "desc", data: this.state.Description },
-                      { name: "phone_no", data: this.state.Phone },
-                      { name: "lat", data: this.state.lat },
-                      { name: "long", data: this.state.long },
-                      { name: "disaster_timeline", data: this.state.disaster },
+                      { name: "email", data: this.state.email.toString()},
+                      { name: "name", data: this.state.Usrname.toString() },
+                      { name: "desc", data: this.state.Description.toString() },
+                      { name: "phone_no", data: this.state.Phone.toString() },
+                      { name: "lat", data: this.state.lat.toString() },
+                      { name: "long", data: this.state.long.toString() },
+                      { name: "disaster_timeline", data: this.state.disaster.toString() },
             
               
                       {
@@ -371,10 +424,10 @@ this.setState({
                       },
             
             
-                      { name: "masonry", data: this.state.masonry },
-                      { name: "external_face", data: this.state.external_face },
-                      { name: "damage_wall", data: this.state.damage_wall },
-                      { name: "storeys", data: this.state.storeys },
+                      { name: "masonry", data: this.state.masonry==1?'yes':'no'  },
+                      { name: "external_face", data: this.state.external_face==1?'yes':'no'  },
+                      { name: "damage_wall", data: this.state.damage_wall==1?'yes':'no'  },
+                      { name: "storeys", data: this.state.storeys==1?'yes':'no'  },
             
             
                     ]
@@ -390,21 +443,37 @@ this.setState({
                      console.log(JSON.stringify(jsonResponse));
                      
             
-                    if (jsonResponse.status == "success") {
-            alert("Sucessfully recorded");
+                    if (jsonResponse.status == "go") {
+                
             this.clearData();
-                   /*   Toast.show({
-                        text: "Homeowner Form sucessfully submitted",
-                        buttonText: "Okay",
-                        type: "success",
-                        duration: 3000
-                      });
-                      this.setState({
+            this.setState({
+              isModalGo:true,
+              loading:false
+            });
+                      /*this.setState({
                         loadingSubmit: false
-                      });*/
+                      })*/
                       //  this.props.navigation.navigate("BasicFormPart2");
-                    } else {
-                      alert("Problem in sending data..Please try again");
+                    } 
+                    
+                    
+                    if (jsonResponse.status == "nogo") {
+                   
+                      this.clearData();
+                  this.setState({
+                    isModalNogo:true,
+                    loading:false
+                  });
+                           
+                                //  this.props.navigation.navigate("BasicFormPart2");
+                              }
+                    
+                    
+                    else {
+                      this.setState({
+                        isModalGo:true,
+                        loading:false
+                      });
                    /*   Toast.show({
                         text: "Problem in sending Data.Please Try Again",
                         buttonText: "Okay",
@@ -423,6 +492,9 @@ this.setState({
                   // this.props.navigation.navigate("BasicFormPart2");
                 } else {
                   Alert.alert(missingField);
+                  this.setState({
+                    loading:false
+                  })
                 }
 
 
@@ -470,7 +542,9 @@ this.setState({
     //     };
   render() {
     return (
-  
+
+
+
         <View style={{ backgroundColor: "#d2dae2" }}>
                      <Header style={{backgroundColor:'#673AB7',alignItems:'center'}}>
              <Left/>
@@ -496,18 +570,133 @@ this.setState({
                           size={18}
                           style={{ color: "#fff",paddingLeft:2 }}
                         />
-            <Text style={{color:'#fff'}}>Save</Text>
+                        {
+                       this.state.loading==true?
+                       <Spinner color='white' />
+                       :
+                       null
+                     }
+            <Text style={{color:'#fff'}}>Submit</Text>
           </Button>
                </Right>
              </Header>
+
+             
+      <Modal isVisible={this.state.isModalGo}>
+      <View style={{ flex: 1 }}>
+
+      <Card>
+        <CardItem header bordered>
+        <Text>
+        Go Message
+        </Text>
+       
+        </CardItem>
+        <CardItem>
+
+
+                                      <View style={{flex:1}}>
+                                        <Image
+                                          style={{
+                                            width:120,
+                                            height:90,
+                                            alignSelf:'center',
+                                            justifyContent:'center',
+                                            alignItems:'center'
+                                          }}
+                                          source={require("../assets/go.png")}
+                                        />
+                                        </View>
+
+</CardItem>
+<CardItem>
+
+<View style={{flex:1,flexDirection:'column'}}>
+<Text style={{
+  fontSize:22,
+  fontWeight:'600',
+  color:'green'
+}}>Congratulation You house can be Retroffitted</Text>
+</View>
+</CardItem>
+<CardItem>
+      <TouchableOpacity onPress={this._toggleModalGo} style={{flex:1}}>
+        <Button rounded style={{backgroundColor:'purple',alignSelf:'center',paddingVertical:10,paddingHorizontal:30}} 
+        onPress={this._toggleModalGo}
+        >
+            <Text style={{
+              color:'#fff'
+            }}>Close</Text>
+          </Button>
+        </TouchableOpacity>
+        </CardItem>
+      </Card>
+       
+      </View>
+    </Modal>
+
+<Modal isVisible={this.state.isModalNogo}>
+<View style={{ flex: 1 }}>
+
+<Card>
+  <CardItem header bordered>
+  <Text>
+  NoGo Message
+  </Text>
+ 
+  </CardItem>
+  <CardItem>
+
+
+                                <View style={{flex:1}}>
+                                  <Image
+                                    style={{
+                                      width:120,
+                                      height:90,
+                                      alignSelf:'center',
+                                      justifyContent:'center',
+                                      alignItems:'center'
+                                    }}
+                                    source={require("../assets/nogo.png")}
+                                  />
+                                  </View>
+
+</CardItem>
+<CardItem>
+
+<View style={{flex:1,flexDirection:'column'}}>
+<Text style={{
+fontSize:22,
+fontWeight:'600',
+color:'red'
+}}>Sorry You house cannot be Retroffitted</Text>
+</View>
+</CardItem>
+<CardItem>
+<TouchableOpacity onPress={this._toggleModalNoGo} style={{flex:1}}>
+  <Button rounded style={{backgroundColor:'purple',alignSelf:'center',paddingVertical:10,paddingHorizontal:30}} 
+  onPress={this._toggleModalNoGo}
+  >
+      <Text style={{
+        color:'#fff'
+      }}>Close</Text>
+    </Button>
+  </TouchableOpacity>
+  </CardItem>
+</Card>
+ 
+</View>
+</Modal>
              <ScrollView>
 
 
 
 
 
+<Container>
 
 <Content padder>
+
 <Card style={{ flex: 0 }}>
                 <CardItem header bordered style={{}}>
                   <Text style={styles.cardTitle}>General Question</Text>
@@ -545,7 +734,9 @@ this.setState({
                       <Body>
                         <Content>
                           <Form>
+                          <KeyboardAwareScrollView>
 
+                      
                           <View style={{ paddingVertical: 8 }}>
                               <Text style={styles.newText}>
                               <Text style={styles.required}>*</Text>
@@ -641,7 +832,7 @@ this.setState({
                           </View>
                         </View>
 
-
+                        <KeyboardAwareScrollView>
 
                         <View style={{ paddingVertical: 8 }}>
                               <Text style={styles.newText}>
@@ -650,7 +841,7 @@ this.setState({
                               </Text>
                               <Item regular>
                                 <Textarea
-                                  value={this.state.address}
+                                  value={this.state.Description}
                                   rowSpan={3}
                                   bordered
                                   placeholder="Enter Details here"
@@ -658,7 +849,7 @@ this.setState({
                                   onChangeText={text =>
                                    
                                     this.setState({
-                                    address:text
+                                      Description:text
                                     })
                                   }
                                   style={{
@@ -682,6 +873,9 @@ this.setState({
                               </Item>
                             </View>
 
+                          </KeyboardAwareScrollView>
+
+                       
 
 
                   
@@ -718,6 +912,8 @@ this.setState({
                                 />
                               </Item>
                             </View>
+</KeyboardAwareScrollView>
+                            
                           </Form>
                         </Content>
                       </Body>
@@ -729,8 +925,6 @@ this.setState({
                   }
 
 </Card>
-
-
 
 <Card style={{ flex: 0 }}>
                 <CardItem header bordered style={{}}>
@@ -938,17 +1132,6 @@ this.setState({
                   }
 
 </Card>
-
-
-
-
-
-
-
-
-
-
-
 
 <Card style={{ flex: 0,paddingBottom:20 }}>
                 <CardItem header bordered style={{}}>
@@ -1181,23 +1364,16 @@ this.setState({
 
 </Content>
 
+
+</Container>
+
+
          
 
 
          
                             
 
-          <View style={{flex:1,alignItems:'center'}}>
-   
-
-
-
-
-
-
-
-      
-          </View>
           
           </ScrollView>
     
